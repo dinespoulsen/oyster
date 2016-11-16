@@ -6,6 +6,7 @@ attr_accessor :balance, :journey
 DEFAULT_BALANCE = 0
 MAX_CAPACITY = 90
 MINIMUM_FARE = 1
+
  def initialize(balance = DEFAULT_BALANCE)
    @balance = balance
    @history = []
@@ -19,15 +20,17 @@ def top_up(money)
 end
 
 def touch_in(station)
-  self.journey = Journey.new(station)
   message = "You're poor, go and top up"
   fail message if self.balance < MINIMUM_FARE
+  self.journey = Journey.new
+  journey.entry_at(station)
 end
 
 def touch_out(station)
-  deduct()
-  journey.exit(station)
+  journey.exit_at(station)
   save_history
+  deduct(journey.fare)
+  self.journey = nil
 end
 
 
