@@ -28,16 +28,15 @@ end
 
 def touch_out(station)
   journey.exit_at(station)
-  save_history
+  save_journey
   deduct(journey.fare)
-  self.journey = nil
 end
 
 
 
 private
 
-def save_history
+def save_journey
   history << self.journey
 end
 
