@@ -18,31 +18,48 @@ def top_up(money)
   self.balance += money
 end
 
-def touch_in(station, journey_klass = Journey)
+def touch_in(station)
   fail poor_message if self.balance < MINIMUM_FARE
-  if !journey.nil?
-    deduct(Journey::PENALTY_FARE)
+  if journey_started?
+    penalty
+    start_journey(station)
   else
-    self.journey = journey_klass.new
-    journey.entry_at(station)
+    start_journey(station)
   end
 
 
 end
 
 def touch_out(station)
-  if journey.nil?
-    deduct(Journey::PENALTY_FARE)
+  if !journey_started?
+    penalty
   else
     save_journey(station)
     deduct(journey.fare)
-    self.journey = nil
+    reset_journey
   end
 end
 
 
 
 private
+
+def reset_journey 
+  self.journey = nil
+end
+
+def penalty
+  deduct(Journey::PENALTY_FARE)
+end
+
+def journey_started?
+  !journey.nil?
+end
+
+def start_journey(station, journey_klass = Journey)
+  self.journey = journey_klass.new
+  journey.entry_at(station)
+end
 
 def poor_message
 message = "You're poor, go and top up"
