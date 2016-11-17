@@ -58,10 +58,15 @@ describe Oyster do
   end
 
   describe "Penalty fares" do
+    before(:each) {card.top_up(10)}
     it "should assign a fare if there is a touch out without touch in" do
       expect{card.touch_out(exit_station)}.to change{card.balance}.by(-Journey::PENALTY_FARE)
     end
 
+    it "should assign a penalty fare if touch_in is repeated" do
+      card.touch_in(entry_station)
+      expect{card.touch_in(exit_station)}.to change{card.balance}.by(-Journey::PENALTY_FARE)
+    end
 
   end
 

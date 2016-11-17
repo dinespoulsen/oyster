@@ -20,8 +20,14 @@ end
 
 def touch_in(station, journey_klass = Journey)
   fail poor_message if self.balance < MINIMUM_FARE
-  self.journey = journey_klass.new
-  journey.entry_at(station)
+  if !journey.nil?
+    deduct(Journey::PENALTY_FARE)
+  else
+    self.journey = journey_klass.new
+    journey.entry_at(station)
+  end
+
+
 end
 
 def touch_out(station)
