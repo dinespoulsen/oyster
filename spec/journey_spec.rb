@@ -9,4 +9,8 @@ describe Journey do
     expect(subject.fare).to eq Journey::PENALTY_FARE
   end
 
+  it "should return the minimum fare if exit is valid" do
+    expect(subject.fare).to eq Journey::MINIMUM_FARE
+  end
+
 end
