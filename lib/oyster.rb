@@ -1,16 +1,15 @@
 require_relative "journey"
 
 class Oyster
-attr_reader :history
+attr_reader :history, :journey_log
 attr_accessor :balance, :journey
 DEFAULT_BALANCE = 0
 MAX_CAPACITY = 90
 MINIMUM_FARE = 1
 
- def initialize(balance = DEFAULT_BALANCE)
+ def initialize(balance = DEFAULT_BALANCE, journey_log_klass = JourneyLog)
    @balance = balance
-   @history = []
-   @journey
+   @journey_log = journey_log_klass.new
  end
 
 def top_up(money)
@@ -20,23 +19,20 @@ end
 
 def touch_in(station)
   fail poor_message if self.balance < MINIMUM_FARE
-  if journey_started?
+  if journey_log.journey_started?
     penalty
-    start_journey(station)
+    journey_log.current_journey(station)
   else
-    start_journey(station)
+    journey_log.current_journey(station)
   end
-
-
 end
 
 def touch_out(station)
-  if !journey_started?
+  if !journey_log.journey_started?
     penalty
   else
-    save_journey(station)
-    deduct(journey.fare)
-    reset_journey
+    deduct(journey_log.journey.fare)
+    journey_log.finish(station)
   end
 end
 
@@ -44,22 +40,10 @@ end
 
 private
 
-def reset_journey 
-  self.journey = nil
-end
-
 def penalty
   deduct(Journey::PENALTY_FARE)
 end
 
-def journey_started?
-  !journey.nil?
-end
-
-def start_journey(station, journey_klass = Journey)
-  self.journey = journey_klass.new
-  journey.entry_at(station)
-end
 
 def poor_message
 message = "You're poor, go and top up"
@@ -69,10 +53,6 @@ def max_balance_message
   message = "The limit for topping up is #{MAX_CAPACITY} pounds"
 end
 
-def save_journey(station)
-  journey.exit_at(station)
-  history << self.journey
-end
 
 def deduct(money = MINIMUM_FARE)
   self.balance -= money

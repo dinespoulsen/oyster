@@ -1,8 +1,5 @@
 require 'oyster'
 
-
-
-
 describe Oyster do
   subject(:card) {described_class.new}
   let(:entry_station) {double(:entry_station)}
@@ -39,11 +36,6 @@ describe Oyster do
   describe "When checking card status" do
     before(:each) {card.top_up(10)}
 
-    it "should return name of the start station when on journey" do
-      card.touch_in(entry_station)
-      expect(card.journey.entry_station).to eq entry_station
-    end
-
     it "should deduct minimum fare from the balance when checking out" do
       card.touch_in(entry_station)
       expect{card.touch_out(entry_station)}.to change{card.balance}.by(-1)
@@ -58,15 +50,10 @@ describe Oyster do
   end
 
   describe "Penalty fares" do
-    before(:each) {card.top_up(10)}
     it "should assign a fare if there is a touch out without touch in" do
       expect{card.touch_out(exit_station)}.to change{card.balance}.by(-Journey::PENALTY_FARE)
     end
 
-    it "should assign a penalty fare if touch_in is repeated" do
-      card.touch_in(entry_station)
-      expect{card.touch_in(exit_station)}.to change{card.balance}.by(-Journey::PENALTY_FARE)
-    end
 
   end
 
@@ -77,15 +64,6 @@ describe Oyster do
       expect(card).to respond_to(:touch_in).with(1).argument
     end
 
-    it "should have an empty list of journeys by default" do
-      expect(card.history).to be_empty
-    end
-
-    it "should store a journey" do
-      card.touch_in(entry_station)
-      card.touch_out(exit_station)
-      expect(card.history.count).to eq 1
-    end
   end
 
 end
