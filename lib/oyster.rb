@@ -10,33 +10,44 @@ MINIMUM_FARE = 1
  def initialize(balance = DEFAULT_BALANCE)
    @balance = balance
    @history = []
-   @journey = nil
+   @journey
  end
 
 def top_up(money)
-  message = "The limit for topping up is #{MAX_CAPACITY} pounds"
-  fail message if max_capacity?(money)
+  fail max_balance_message if max_capacity?(money)
   self.balance += money
 end
 
-def touch_in(station)
-  message = "You're poor, go and top up"
-  fail message if self.balance < MINIMUM_FARE
-  self.journey = Journey.new
+def touch_in(station, journey_klass = Journey)
+  fail poor_message if self.balance < MINIMUM_FARE
+  self.journey = journey_klass.new
   journey.entry_at(station)
 end
 
 def touch_out(station)
-  journey.exit_at(station)
-  save_journey
-  deduct(journey.fare)
+  if journey.nil?
+    deduct(Journey::PENALTY_FARE)
+  else
+    save_journey(station)
+    deduct(journey.fare)
+    self.journey = nil
+  end
 end
 
 
 
 private
 
-def save_journey
+def poor_message
+message = "You're poor, go and top up"
+end
+
+def max_balance_message
+  message = "The limit for topping up is #{MAX_CAPACITY} pounds"
+end
+
+def save_journey(station)
+  journey.exit_at(station)
   history << self.journey
 end
 

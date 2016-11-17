@@ -5,8 +5,8 @@ require 'oyster'
 
 describe Oyster do
   subject(:card) {described_class.new}
-  let(:station) {double(:station)}
-  let(:station2) {double(:station)}
+  let(:entry_station) {double(:entry_station)}
+  let(:exit_station) {double(:exit_station)}
 
   describe "Balance" do
     it "should display zero when object is initialized" do
@@ -18,7 +18,7 @@ describe Oyster do
       it "if there less balance then minimum journey fare, and we touch in" do
         card.top_up(0.5)
         message = "You're poor, go and top up"
-        expect{card.touch_in(station)}.to raise_error(message)
+        expect{card.touch_in(entry_station)}.to raise_error(message)
       end
 
       it " if we add more than 90 to the balance" do
@@ -40,14 +40,28 @@ describe Oyster do
     before(:each) {card.top_up(10)}
 
     it "should return name of the start station when on journey" do
-      card.touch_in(station)
-      expect(card.journey.entry_station).to eq station
+      card.touch_in(entry_station)
+      expect(card.journey.entry_station).to eq entry_station
     end
 
     it "should deduct minimum fare from the balance when checking out" do
-      card.touch_in(station)
-      expect{card.touch_out(station)}.to change{card.balance}.by(-1)
+      card.touch_in(entry_station)
+      expect{card.touch_out(entry_station)}.to change{card.balance}.by(-1)
     end
+
+    it "journey status should be reset to nil after touch_out" do
+      card.touch_in(entry_station)
+      card.touch_out(exit_station)
+      expect(card.journey).to be nil
+    end
+
+  end
+
+  describe "Penalty fares" do
+    it "should assign a fare if there is a touch out without touch in" do
+      expect{card.touch_out(exit_station)}.to change{card.balance}.by(-Journey::PENALTY_FARE)
+    end
+
 
   end
 
@@ -63,8 +77,8 @@ describe Oyster do
     end
 
     it "should store a journey" do
-      card.touch_in(station)
-      card.touch_out(station2)
+      card.touch_in(entry_station)
+      card.touch_out(exit_station)
       expect(card.history.count).to eq 1
     end
   end
