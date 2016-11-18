@@ -2,7 +2,7 @@ require './lib/journey.rb'
 
 class Oyster
 
-attr_reader :balance, :in_journey, :entry_station, :exit_station, :journey_history
+attr_reader :balance, :journey_history
 
 attr_accessor :journey
 
@@ -30,10 +30,14 @@ def touch_in(station, journey_klass=Journey)
 end
 
 def touch_out(station)
-  deduct()
-  journey.save_exit(station)
-  save_history
-  self.journey = nil
+  if journey.nil?
+    deduct(Journey::PENALTY_FARE)
+  else
+    journey.save_exit(station)
+    deduct(journey.fare)
+    save_history
+    self.journey = nil
+  end
 end
 
 private
