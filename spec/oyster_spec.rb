@@ -24,7 +24,7 @@ describe Oyster do
         expect{card.top_up(91)}.to raise_error(message)
       end
 
-      
+
 
     end
   end
@@ -63,16 +63,14 @@ describe Oyster do
     end
   end
 
-
-
     context "using Journey" do
 
-
       it "saves each journey" do
-      card.top_up(10)
-      card.touch_in("station1")
-      card.touch_out("station2")
-      expect(card.journey_history).to eq [{"station1"=>"station2"}]
+        card.top_up(10)
+        card.touch_in(station)
+        card.touch_out(station2)
+        expect(card.journey_history.count).to eq 1
       end
+
   end
 end
