@@ -6,7 +6,12 @@ describe Oyster do
   let(:station) {double(:station)}
   let(:station2) {double(:station)}
 
+    it "should take station as a variable when touching in" do
+      expect(card).to respond_to(:touch_in).with(1).argument
+    end
+
   describe "Balance" do
+
     it "should display zero when object is initialized" do
       expect(card.balance).to eq 0
     end
@@ -23,51 +28,19 @@ describe Oyster do
         message = "The limit for topping up is 90 pounds"
         expect{card.top_up(91)}.to raise_error(message)
       end
-
-
-
-    end
-  end
-
-  describe "will change, " do
-    before(:each) {card.top_up(10)}
-    it "should add 10 to the balance" do
-      expect(card.balance).to eq 10
-    end
-  end
-
-  describe "When checking card status" do
-    before(:each) {card.top_up(10)}
-
-    it "should deduct minimum fare from the balance when checking out" do
-      card.touch_in(station)
-      expect{card.touch_out(station)}.to change{card.balance}.by(-1)
     end
 
-  end
-
-  describe "To keep history of journeys" do
-    before(:each) {card.top_up(10)}
-
-    it "should take station as a variable when touching in" do
-      expect(card).to respond_to(:touch_in).with(1).argument
-    end
-
-
-
-    it 'should save the journey history' do
-      expect(card).to respond_to(:journey_history)
-    end
-  end
-
-    context "using Journey" do
-
-      it "saves each journey" do
-        card.top_up(10)
-        card.touch_in(station)
-        card.touch_out(station2)
-        expect(card.journey_history.count).to eq 1
+    context "will change, " do
+      before(:each) {card.top_up(10)}
+      it "should add 10 to the balance" do
+        expect(card.balance).to eq 10
       end
 
+      it "should deduct minimum fare from the balance when checking out" do
+        card.touch_in(station)
+        expect{card.touch_out(station)}.to change{card.balance}.by(-1)
+      end
+
+    end
   end
 end
