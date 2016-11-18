@@ -28,9 +28,8 @@ end
 
 def touch_out(station)
   if !journey_log.in_journey?
-    deduct(Journey::PENALTY_FARE)
+    deduct(journey_log.journey.fare)
   else
-
     journey_log.finish(station)
     deduct(journey_log.journey.fare)
     journey_log.reset_journey
