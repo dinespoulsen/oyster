@@ -1,11 +1,11 @@
 require_relative "journey"
 
+#Keeps track of the balance and touching in and out
 class Oyster
 attr_reader :history, :journey_log
 attr_accessor :balance, :journey
 DEFAULT_BALANCE = 0
 MAX_CAPACITY = 90
-MINIMUM_FARE = 1
 
  def initialize(balance = DEFAULT_BALANCE, journey_log_klass = JourneyLog)
    @balance = balance
@@ -18,7 +18,7 @@ def top_up(money)
 end
 
 def touch_in(station)
-  fail poor_message if self.balance < MINIMUM_FARE
+  fail poor_message if self.balance < Journey::MINIMUM_FARE
   if journey_log.journey_started?
     penalty
     journey_log.current_journey(station)
@@ -54,7 +54,7 @@ def max_balance_message
 end
 
 
-def deduct(money = MINIMUM_FARE)
+def deduct(money = Journey::MINIMUM_FARE)
   self.balance -= money
 end
 

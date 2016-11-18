@@ -1,5 +1,6 @@
 require_relative 'journey'
 
+#Manages the journeys
 class JourneyLog
 
   attr_reader :journey_klass, :journeys

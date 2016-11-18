@@ -1,3 +1,4 @@
+#keeps track of a journey start, end and its price
 class Journey
   attr_accessor :exit_station, :entry_station
 
@@ -28,6 +29,6 @@ class Journey
     (entry_station != nil || exit_station != nil)
   end
 
-  
+
 
 end

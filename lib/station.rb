@@ -1,3 +1,4 @@
+#holds information about a station
 class Station
 DEFAULT_NAME = "station"
 DEFAULT_ZONE = 1
