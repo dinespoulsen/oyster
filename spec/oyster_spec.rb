@@ -38,9 +38,6 @@ describe Oyster do
 
   describe "When checking card status" do
     before(:each) {card.top_up(10)}
-    it "should return nil as a default" do
-      expect(card.entry_station).to eq nil
-    end
 
     it "should deduct minimum fare from the balance when checking out" do
       card.touch_in(station)
