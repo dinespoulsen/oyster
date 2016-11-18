@@ -2,9 +2,9 @@ require './lib/journey.rb'
 
 class Oyster
 attr_reader :balance, :in_journey, :entry_station, :exit_station, :journey, :journey_history
+
 DEFAULT_BALANCE = 0
 MAX_CAPACITY = 90
-MINIMUM_FARE = 1
 
  def initialize(balance = DEFAULT_BALANCE, journey = Journey.new)
    @balance = balance
@@ -21,7 +21,7 @@ end
 
 def touch_in(station)
   message = "You're poor, go and top up"
-  fail message if @balance < MINIMUM_FARE
+  fail message if @balance < Journey::MINIMUM_FARE
   journey.save_entry(station)
 end
 
@@ -40,7 +40,7 @@ def save_history
   @journey_history << journey.complete_journey
 end
 
-def deduct(money = MINIMUM_FARE)
+def deduct(money = Journey::MINIMUM_FARE)
   @balance -= money
 end
 
